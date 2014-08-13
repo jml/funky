@@ -1,0 +1,4 @@
+/.env/
+/_trial_temp/
+/get_funky.egg-info/
+*.pyc
