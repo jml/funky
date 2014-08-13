@@ -34,3 +34,12 @@ def funkify(function):
         return call_with_globals(new_globals, function, *args, **kwargs)
     return wrapper
 
+
+class ImpureFunction(Exception):
+    pass
+
+
+def pure(function):
+    if get_globals(function):
+        raise ImpureFunction(function)
+    return function

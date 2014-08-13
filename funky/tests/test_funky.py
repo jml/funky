@@ -9,6 +9,11 @@ from funky import (
     mutated_dict,
 )
 
+from funky._funky import (
+    ImpureFunction,
+    pure,
+)
+
 
 class GetGlobalsTest(TestCase):
 
@@ -80,3 +85,32 @@ class FunkifyTest(TestCase):
         def f(x):
             return x + a
         self.assertEqual(5, funkify(f)(2, _override_a=3))
+
+
+class PureTest(TestCase):
+
+    def test_pure(self):
+        def f(x):
+            return x
+        self.assertEqual(32, pure(f)(32))
+
+    def test_impure(self):
+        def f(x):
+            return a + x
+        self.assertRaises(ImpureFunction, pure, f)
+
+    def test_pure_method(self):
+        class Foo(object):
+            @pure
+            def f(self, x):
+                return x
+        foo = Foo()
+        self.assertEqual(8, foo.f(8))
+
+    def test_impure_method(self):
+        def define_impure():
+            class Foo(object):
+                @pure
+                def f(self, x):
+                    return x + self.y
+        self.assertRaises(ImpureFunction, define_impure)
